@@ -8,8 +8,14 @@ host = socket.gethostname()
 
 @app.route('/')
 def hello():
-    redis.incr('hits')
-    return '\nHello World!\nI have been seen %s times.\nMy Host name is %s\n\n' % (redis.get('hits') ,host)
+    redis.incr('global_hits')
+    redis.incr(host)
+    return 'Global: {global_hits}, Local: {local_hits}, host: {host}'.format(
+        global_hits=redis.get('global_hits'),
+        local_hits=redis.get(host),
+        host=host
+    )
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
